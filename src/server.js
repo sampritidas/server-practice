@@ -1,3 +1,4 @@
+const { on } = require('events');
 const { createServer } = require('net');
 
 const responseBody = (data) => `<html><body><h1>${data}</h1></body></html>`;
