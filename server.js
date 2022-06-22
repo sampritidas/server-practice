@@ -1,6 +1,14 @@
+const { on } = require('events');
 const { createServer } = require('net');
 
-const response = (data) => `HTTP/1.1 200\r\n\r\n<html><body><h1>${data}</h1></body></html>\r\n`;
+const responseHeader = 'HTTP/1.1 200';
+
+const responseBody = (data) => `<html><body><h1>${data}</h1></body></html>`;
+
+const response = (data) => {
+  const body = responseBody(data);
+  return `${responseHeader}\r\n\r\n${body}\r\n`;
+}
 
 const parseRequestLine = (requestLine) => {
   const [verb, path, protocol] = requestLine.split(' ');
@@ -8,9 +16,9 @@ const parseRequestLine = (requestLine) => {
 };
 
 const separateByColon = (header) => {
-  const keyOfColon = header.indexOf(':');
-  const key = header.slice(0, keyOfColon);
-  const value = header.slice(keyOfColon);
+  const indexOfColon = header.indexOf(':');
+  const key = header.slice(0, indexOfColon);
+  const value = header.slice(indexOfColon);
   return [key, value];
 };
 
@@ -38,22 +46,28 @@ const onResponse = (socket, requestLine, headers) => {
   socket.end();
 };
 
-const server = createServer((socket) => {
-  socket.setEncoding('utf8');
-  process.stdin.setEncoding('utf8');
+const runServer = (PORT, handler) => {
+  const server = createServer((socket) => {
+    socket.setEncoding('utf8');
+    process.stdin.setEncoding('utf8');
 
-  socket.on('data', (chunk) => {
-    const request = chunk.split('\r\n');
-    const requestLine = parseRequestLine(request[0]);
-    const headers = parseHeader(request.slice(1));
-    onResponse(socket, requestLine, headers);
-  })
+    socket.on('data', (chunk) => {
+      const request = chunk.split('\r\n');
+      const requestLine = parseRequestLine(request[0]);
+      const headers = parseHeader(request.slice(1));
+      handler(socket, requestLine, headers);
+    })
+  });
 
-  process.stdin.on('data', (chunk) => {
-    console.log('my', chunk);
-    socket.write(chunk);
-  })
-});
+  server.listen(PORT, () => console.log(`Listening to ${PORT}`));
+};
 
-const PORT = 4444;
-server.listen(PORT, () => console.log(`Listening to ${PORT}`));
+
+const main = () => {
+  const PORT = 4444;
+  runServer(PORT, onResponse);
+}
+
+main();
+
+module.exports = { parseRequestLine, getResponse };
