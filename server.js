@@ -17,7 +17,8 @@ const countViews = () => {
   }
 };
 
-const handlers = [countViews(), serveFileContent, dynamicResponse];
+// const handlers = [countViews(), serveFileContent, dynamicResponse];
+const handlers = [dynamicResponse, serveFileContent];
 
 const handle = (handlers) => {
   return (response, request, staticRoot) => {
@@ -37,6 +38,7 @@ const runServer = (PORT, staticRoot, handler) => {
     socket.on('data', (chunk) => {
       const [requestLine] = parseChunk(chunk.toString());
       const response = new Response(socket);
+      console.log(handler);
       handler(response, requestLine, staticRoot);
     })
   });

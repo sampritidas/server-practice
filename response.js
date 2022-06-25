@@ -36,7 +36,6 @@ class Response {
 
   send(protocol, content) {
     this.setHeader('content-length', content.length);
-
     this.writeHeaders(protocol);
     this.write('\r\n');
     this.write(content);

@@ -1,5 +1,4 @@
 const fs = require('fs');
-const { formatResponse } = require('./dynamicResponse');
 
 const extentions = {
   '.html': 'text/html',
@@ -15,7 +14,7 @@ const getContentType = (filename) => {
 };
 
 const path = (staticRoot, uri) => {
-  return (staticRoot === undefined ? './public' : staticRoot) + uri;
+  return (staticRoot === undefined ? '.' : staticRoot) + uri;
 };
 
 const serveFileContent = (response, { uri, protocol }, staticRoot) => {
@@ -24,7 +23,7 @@ const serveFileContent = (response, { uri, protocol }, staticRoot) => {
   }
 
   const filename = path(staticRoot, uri);
-  console.log('filename', filename);
+  console.log('path', filename);
 
   if (!fs.existsSync(filename)) {
     response.statuscode = 404;
@@ -38,7 +37,6 @@ const serveFileContent = (response, { uri, protocol }, staticRoot) => {
   const content = fs.readFileSync(filename);
 
   response.setHeader('content-type', contentType);
-
   response.send(protocol.trim(), content);
   return true;
 };
