@@ -1,20 +1,20 @@
-const { parseRequestLine, getResponse, responseBody, response, separateByColon, parseHeader } = require("../src/server");
-
 const assert = require('assert');
+const { formatResponse, responseBody } = require('../dynamicResponse.js');
+const { parseRequestLine, separateByColon, parseHeader } = require('../parseRequest.js');
 
 describe('parseRequestLine', () => {
-  it('Should return the object of verb, path, protocol', () => {
-    const exp = { verb: 'GET', path: '/', protocol: 'HTTP/1.1' }
+  it('Should return the object of verb, uri, protocol', () => {
+    const exp = { verb: 'GET', uri: '/', protocol: 'HTTP/1.1' }
     assert.deepStrictEqual(
       parseRequestLine('GET / HTTP/1.1'), exp);
   });
 });
 
-describe('getResponse', () => {
-  it('Should give html contains "hello" if path"/"', () => {
-    const input = { path: '/' };
+describe('formatResponse', () => {
+  it('Should give html contains "hello" if uri"/"', () => {
+    const input = 'hello';
     const exp = 'HTTP/1.1 200\r\n\r\n<html><body><h1>hello</h1></body></html>\r\n'
-    assert.strictEqual(getResponse(input), exp);
+    assert.strictEqual(formatResponse(input), exp);
   });
 });
 
@@ -25,25 +25,18 @@ describe('responseBody', () => {
   });
 });
 
-describe('response', () => {
-  it('Should return response string', () => {
-    const exp = 'HTTP/1.1 200\r\n\r\n<html><body><h1>hi</h1></body></html>\r\n'
-    assert.strictEqual(response('hi'), exp);
-  });
-});
-
 describe('separateByColon', () => {
   it('Should give key and value in array', () => {
-    const exp = ['host ', ' localhost'];
+    const exp = ['host', 'localhost'];
     assert.deepStrictEqual(
-      separateByColon('host : localhost'), exp);
+      separateByColon('host: localhost'), exp);
   });
 });
 
 describe('parseHeader', () => {
   it('Should return parsed header', () => {
     const act = ['host: localhost', 'user-agent: me'];
-    const exp = { host: ' localhost', 'user-agent': ' me' };
+    const exp = { host: 'localhost', 'user-agent': 'me' };
     assert.deepStrictEqual(parseHeader(act), exp);
   });
 });

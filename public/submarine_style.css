@@ -1,0 +1,49 @@
+.nature {
+  /* width: 960px;
+  height: 500px; */
+  margin: 0 auto;
+  background-color: lightblue;
+}
+
+.sky {
+  height: 50%;
+}
+
+.water {
+  height: 50%;
+  background-color: #4092f7;
+  font-family: impact;
+  font-size: 160px;
+  text-align: center;
+  color: rgb(48, 87, 135, 75%);
+  text-shadow: 1px 1px rgb(189, 218, 255, 29%);
+}
+
+.skylayer {
+  height: 20%;
+}
+
+.Exosphere {
+  background-color: rgb(160, 210, 247);
+}
+
+.Thermosphere {
+  background-color: rgb(170, 215, 250);
+}
+
+.Mesosphere {
+  background-color: rgb(190, 225, 250);
+}
+
+.Stratosphere {
+  background-color: rgb(204, 230, 250);
+}
+
+.Troposphere {
+  background-color: rgb(222, 240, 251);
+}
+
+span {
+  position: relative;
+  top: -65px;
+}

@@ -1,71 +1,52 @@
 const { createServer } = require('net');
+const { parseChunk } = require("./parseRequest.js");
+const { dynamicResponse } = require("./dynamicResponse.js");
+const { serveFileContent } = require('./serveFileContent.js');
+const { Response } = require('./response.js');
 
-const responseBody = (data) => `<html><body><h1>${data}</h1></body></html>`;
-
-const response = (data) => {
-  const responseHeader = 'HTTP/1.1 200';
-  const body = responseBody(data);
-  return `${responseHeader}\r\n\r\n${body}\r\n`;
-}
-
-const parseRequestLine = (requestLine) => {
-  const [verb, path, protocol] = requestLine.split(' ');
-  return { verb, path, protocol };
-};
-
-const separateByColon = (header) => {
-  const indexOfColon = header.indexOf(':');
-  const key = header.slice(0, indexOfColon);
-  const value = header.slice(indexOfColon + 1);
-  return [key, value];
-};
-
-const parseHeader = (header) => {
-  const headers = {};
-  let index = 0;
-  while (index < header.length && header[index].length > 0) {
-    const [key, value] = separateByColon(header[index]);
-    headers[key] = value;
-    index++;
-  }
-  return headers;
-};
-
-const getResponse = ({ path }) => {
-  if (path === '/') {
-    return response('hello');
+const countViews = () => {
+  let count = 0;
+  return (response, { protocol, uri }, staticRoot) => {
+    console.log(response);
+    count++;
+    if (uri === '/view') {
+      response.send(protocol.trim(), `File views ${count} times`);
+      return true;
+    }
+    return false;
   }
 };
 
-const onResponse = (socket, requestLine, headers) => {
-  console.log(requestLine, headers);
-  const response = getResponse(requestLine);
-  socket.write(response);
-  socket.end();
+const handlers = [countViews(), serveFileContent, dynamicResponse];
+
+const handle = (handlers) => {
+  return (response, request, staticRoot) => {
+    for (const handler of handlers) {
+      if (handler(response, request, staticRoot)) {
+        return true;
+      }
+    }
+    return false;
+  }
 };
 
-const runServer = (PORT, handler) => {
+const runServer = (PORT, staticRoot, handler) => {
   const server = createServer((socket) => {
     socket.setEncoding('utf8');
-    process.stdin.setEncoding('utf8');
 
     socket.on('data', (chunk) => {
-      const request = chunk.split('\r\n');
-      const requestLine = parseRequestLine(request[0]);
-      const headers = parseHeader(request.slice(1));
-      handler(socket, requestLine, headers);
+      const [requestLine] = parseChunk(chunk.toString());
+      const response = new Response(socket);
+      handler(response, requestLine, staticRoot);
     })
   });
 
   server.listen(PORT, () => console.log(`Listening to ${PORT}`));
 };
 
-
-const main = () => {
+const main = (staticRoot) => {
   const PORT = 4444;
-  runServer(PORT, onResponse);
-}
+  runServer(PORT, staticRoot, handle(handlers));
+};
 
-main();
-
-module.exports = { parseRequestLine, getResponse, response, responseBody, separateByColon, parseHeader };
+main(process.argv[2]);

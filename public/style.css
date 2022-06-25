@@ -1,0 +1,107 @@
+* {
+    align-items: center;
+    justify-content: center;
+    font-family: serif;
+}
+p {
+    margin: 0px;
+}
+address {
+    font-style: normal;
+}
+
+.brochure {
+    height: 610px;
+    background-color: rgb(208, 238, 187);
+    display: flex;
+    flex-direction: row;
+    width:56.25em;
+    border: 0.32em solid rgb(22, 86, 122);
+    border-radius: 0.625em;
+}
+
+.images {
+    height: 100%;
+    width: 35%;
+    /* background-color:rgba(31, 90, 42, 0.82); */
+    background-image: linear-gradient(rgba(120, 167, 128, 0.868),rgba(111, 148, 118, 0.868));
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+    align-content: space-evenly;
+}
+
+.rectangle-image {
+    height: 6.5em;
+    width: 7.5em;
+    overflow: hidden;
+    border-bottom: 0.13em solid rgb(3, 58, 3);
+    box-shadow: 0.05em 0.05em 0.5em 0.15em rgb(3 58 3);
+    border-radius: 0.32em;
+}
+
+.portrait {
+    height: 20.625em;
+    width: 16.75em;
+    overflow: hidden;
+    border-bottom: 0.13em solid rgb(3, 58, 3);
+    box-shadow: 0.05em 0.05em 0.5em 0.15em rgb(3 58 3);
+    border-radius: 0.3em;
+}
+
+.short-image {
+    height: 6.5em;
+}
+
+.long-image {
+    width: 16.75em;
+}
+
+.tour-details {
+    height: 100%;
+    width: 30%;
+    background-color:rgb(25, 82, 35);
+    color: white;
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-evenly;
+    text-align: center;
+}
+
+.highlighted-text {
+    font-weight: bold;
+    font-size:xx-large; 
+}
+
+.tour-description {
+    color:rgb(235, 235, 129);
+    padding: 0.625em;
+    line-height: 1.25em;
+}
+
+.contact-details {
+    display: flex;
+    flex-flow: column wrap;
+    justify-content: space-evenly;
+    height: 37.5em;
+    width: 35%;
+}
+.contacts {
+    background-image: linear-gradient(rgba(31, 90, 42, 0.868),rgba(50, 145, 67, 0.868));
+    /* background-color:rgba(31, 90, 42, 0.868); */
+    color: rgb(240, 234, 234);
+    height: 5.37em;
+    width: 100%;
+    border-bottom: 0.13em solid rgb(20, 87, 20);
+    display:flex;
+    flex-flow: column wrap;
+}
+
+.contact-medium {
+    font-weight: bold;
+    font-size:x-large; 
+}
+
+.link {
+    font-weight: 500;
+}
