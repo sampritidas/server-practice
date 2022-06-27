@@ -6,19 +6,6 @@ const formatResponse = (data) => {
   return `${responseHeader}\r\n\r\n${body}\r\n`;
 };
 
-const _dynamicResponse = (response, { uri }, headers) => {
-  if (uri === '/') {
-    response.write(formatResponse('hello'));
-    return true;
-  }
-  if (uri === '/nilam') {
-    response.write(formatResponse('hello I am Nilam'));
-    return true;
-  }
-  response.write(formatResponse('Invalid'));
-  return false;
-};
-
 const parseUri = (rawUri) => {
   const queryParams = {};
   const [uri, params] = rawUri.split('?');
@@ -56,9 +43,53 @@ const index = (response, protocol) => {
   return true;
 };
 
-const dynamicResponse = (response, { protocol, uri }, staticRoot) => {
+const gaint = (response, protocol, queries) => {
+  const { head, body } = queries;
+  console.log(queries);
+  response.setHeader('content-type', 'text/plain');
+  response.statuscode = 200;
+  response.send(protocol, `head is ${head} and body is ${body}`);
+  return true;
+};
+
+const calculateHex = (value) => {
+  const firstDigit = Math.floor(value / 16);
+  const secondDigit = (value / 16 - firstDigit) * 16;
+  return firstDigit.toString(16) + secondDigit.toString(16);
+};
+
+const getHex = (red, green, blue) => {
+  return calculateHex(red) + calculateHex(green) + calculateHex(blue);
+};
+
+const getHeader = (red, green, blue) => {
+  return `<h3>RED = ${red} GREEN = ${green} BLUE = ${blue}</h3>`;
+};
+
+const getDiv = (hex) => {
+  return `<div style="height:300; width: 300; background-color: ${hex}; border: 2px solid black"></div>`;
+};
+
+const combinedBox = (red, green, blue, hex) => {
+  const header = getHeader(red, green, blue);
+  const div = getDiv(hex);
+  return `${header}${div}`;
+};
+
+const combine = (response, protocol, queries) => {
+  const { red, green, blue } = queries;
+  const hex = getHex(red, green, blue);
+  const content = combinedBox(red, green, blue, hex);
+  console.log(content);
+  response.setHeader('content-type', 'text/html');
+  response.statuscode = 200;
+  response.send(protocol, content);
+  return true;
+};
+
+const dynamicResponse = ({ protocol, uri }, response, staticRoot) => {
   const [parsedUri, queries] = parseUri(uri);
-  console.log('p', parsedUri, queries);
+  console.log(parsedUri, queries);
   if (parsedUri === '/max') {
     return max(response, protocol.trim(), queries);
   }
@@ -68,7 +99,12 @@ const dynamicResponse = (response, { protocol, uri }, staticRoot) => {
   if (parsedUri === '/index') {
     return index(response, protocol.trim());
   }
-  return false;
+  if (parsedUri === '/gaint') {
+    return gaint(response, protocol.trim(), queries);
+  }
+  if (parsedUri === '/combine') {
+    return combine(response, protocol.trim(), queries);
+  }
 }
 
-module.exports = { dynamicResponse, responseBody, formatResponse };
+module.exports = { dynamicResponse, responseBody, formatResponse, parseUri };

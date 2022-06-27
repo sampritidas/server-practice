@@ -2,12 +2,12 @@ const { createServer } = require('net');
 const { parseChunk } = require("./parseRequest.js");
 const { dynamicResponse } = require("./dynamicResponse.js");
 const { serveFileContent } = require('./serveFileContent.js');
+const { palatteHandler } = require('./palatteHandler.js');
 const { Response } = require('./response.js');
 
 const countViews = () => {
   let count = 0;
   return (response, { protocol, uri }, staticRoot) => {
-    console.log(response);
     count++;
     if (uri === '/view') {
       response.send(protocol.trim(), `File views ${count} times`);
@@ -18,12 +18,12 @@ const countViews = () => {
 };
 
 // const handlers = [countViews(), serveFileContent, dynamicResponse];
-const handlers = [dynamicResponse, serveFileContent];
+const handlers = [palatteHandler, dynamicResponse, serveFileContent];
 
 const handle = (handlers) => {
-  return (response, request, staticRoot) => {
+  return (request, response, staticRoot) => {
     for (const handler of handlers) {
-      if (handler(response, request, staticRoot)) {
+      if (handler(request, response, staticRoot)) {
         return true;
       }
     }
@@ -38,8 +38,7 @@ const runServer = (PORT, staticRoot, handler) => {
     socket.on('data', (chunk) => {
       const [requestLine] = parseChunk(chunk.toString());
       const response = new Response(socket);
-      console.log(handler);
-      handler(response, requestLine, staticRoot);
+      handler(requestLine, response, staticRoot);
     })
   });
 

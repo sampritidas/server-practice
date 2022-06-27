@@ -1,0 +1,22 @@
+body{
+  width: 700px;
+  height: 500px;
+  margin: 0 auto;
+}
+.outer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.palatte {
+  border-bottom: 0.01em solid rgb(218, 225, 218);
+  box-shadow: 0.05em 0.05em 0.5em 0.15em rgb(231, 237, 231);
+}
+.palatte div{
+  width: 70%;
+  height: 100%;
+}
+.palatte>div {
+  width: 100%;
+}

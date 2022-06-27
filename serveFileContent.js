@@ -17,7 +17,7 @@ const path = (staticRoot, uri) => {
   return (staticRoot === undefined ? '.' : staticRoot) + uri;
 };
 
-const serveFileContent = (response, { uri, protocol }, staticRoot) => {
+const serveFileContent = ({ uri, protocol }, response, staticRoot) => {
   if (uri === '/') {
     uri = '/index.html';
   }
